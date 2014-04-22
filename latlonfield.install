@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Install and uninstall functions for the latlonfield module.
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function latlonfield_field_schema($field) {
+  return array(
+    'columns' => array(
+      'latitude' => array(
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 8,
+        'not null' => FALSE,
+      ),
+      'longitude' => array(
+        'type' => 'numeric',
+        'precision' => 11,
+        'scale' => 8,
+        'not null' => FALSE,
+      ),
+    ),
+    'indexes' => array(
+      'lat_lon' => array('latitude', 'longitude'),
+    ),
+  );
+}

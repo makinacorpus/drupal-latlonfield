@@ -1,0 +1,14 @@
+<?php
+
+require_once 'latlonfield.field.inc';
+
+/**
+ * Implements hook_theme().
+ */
+function latlonfield_theme() {
+  return array(
+    'latlonfield_formatter' => array(
+      'variables' => array('item' => array()),
+    ),
+  );
+}

@@ -1,0 +1,3 @@
+name = Latlon field
+description = "Simple lat/lon field storage."
+core = 7.x
