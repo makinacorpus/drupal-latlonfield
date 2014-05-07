@@ -29,3 +29,10 @@ function latlonfield_field_schema($field) {
     ),
   );
 }
+
+/**
+ * Implements hook_uninstall().
+ */
+function latlonfield_uninstall() {
+  variable_del('latlonfield_google_api_key');
+}

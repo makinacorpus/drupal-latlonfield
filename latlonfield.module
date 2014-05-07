@@ -3,6 +3,23 @@
 require_once 'latlonfield.field.inc';
 
 /**
+ * Implements hook_menu().
+ */
+function latlonfield_menu() {
+  $items = array();
+
+  $items['admin/config/content/latlonfield'] = array(
+    'title' => 'LatLon Field settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('latlonfield_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'latlonfield.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
  * Implements hook_theme().
  */
 function latlonfield_theme() {
@@ -13,6 +30,7 @@ function latlonfield_theme() {
     'latlonfield_gmap_formatter' => array(
       'variables' => array(
         'items' => array(),
+        'api_key' => '',
         'map_options' => array(),
         'marker_options' => array(),
         'attributes' => array(),

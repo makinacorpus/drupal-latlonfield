@@ -104,11 +104,45 @@ function latlonfield_field_formatter_info() {
     'latlonfield_gmap' => array(
       'label' => t('Google map'),
       'field types' => array('latlon'),
-      'settings' => array(),
+      'settings' => array('google_api_key' => ''),
     ),
   );
 
   return $formatters;
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function latlonfield_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $type = $instance['display'][$view_mode]['type'];
+  $settings = $instance['display'][$view_mode]['settings'];
+  $element = array();
+
+  if ($type === 'latlonfield_gmap') {
+    $element['google_api_key'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Google map API key'),
+      '#description' => t('Generic Google API key could be set at this <a href="!url">page</a>.', array('!url' => url('admin/config/content/latlonfield'))),
+      '#default_value' => !empty($settings['google_api_key']) ? $settings['google_api_key'] : variable_get('latlonfield_google_api_key', ''),
+    );
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function latlonfield_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+  $output = '';
+
+  if ($display['type'] === 'latlonfield_gmap') {
+    $output .= t('API key : !key', array('!key' => !empty($settings['google_api_key']) ? $settings['google_api_key'] : t('None')));
+  }
+  return $output;
 }
 
 /**
@@ -129,6 +163,7 @@ function latlonfield_field_formatter_view($entity_type, $entity, $field, $instan
     $element = array(
       '#theme' => 'latlonfield_gmap_formatter',
       '#items' => $items,
+      '#api_key' => $display['settings']['google_api_key'],
     );
   }
 
@@ -159,6 +194,7 @@ function template_process_latlonfield_gmap_formatter(&$variables) {
   $items = $variables['items'];
   if (!empty($items)) {
 
+    $api_key = $variables['api_key'];
     $map_options = $variables['map_options'];
     $marker_options = $variables['marker_options'];
     $attributes =& $variables['attributes'];
@@ -167,7 +203,8 @@ function template_process_latlonfield_gmap_formatter(&$variables) {
       $attributes['id'] = drupal_html_id('latlonfield-gmap');
     }
 
-    drupal_add_js('http://maps.google.com/maps/api/js?sensor=false', 'external');
+    $url = ($GLOBALS['is_https'] ? 'https' : 'http') . '://maps.google.com/maps/api/js?sensor=false' . ($api_key ? "&key=$api_key" : '');
+    drupal_add_js($url, 'external');
     drupal_add_js(drupal_get_path('module', 'latlonfield') . '/latlonfield.js');
     drupal_add_js(array(
       'LatLonField' => array(
