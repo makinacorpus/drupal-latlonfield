@@ -96,8 +96,13 @@ function latlonfield_element_validate($element, &$form_state, $form) {
  */
 function latlonfield_field_formatter_info() {
   $formatters = array(
-    'latlon' => array(
+    'latlonfield' => array(
       'label' => t('Default'),
+      'field types' => array('latlon'),
+      'settings' => array(),
+    ),
+    'latlonfield_gmap' => array(
+      'label' => t('Google map'),
       'field types' => array('latlon'),
       'settings' => array(),
     ),
@@ -112,10 +117,18 @@ function latlonfield_field_formatter_info() {
 function latlonfield_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
 
-  foreach ($items as $delta => $item) {
-    $element[$delta] = array(
-      '#theme' => 'latlonfield_formatter',
-      '#item' => $item,
+  if ($display['type'] === 'latlonfield') {
+    foreach ($items as $delta => $item) {
+      $element[$delta] = array(
+        '#theme' => 'latlonfield_default_formatter',
+        '#item' => $item,
+      );
+    }
+  }
+  elseif ($display['type'] === 'latlonfield_gmap') {
+    $element = array(
+      '#theme' => 'latlonfield_gmap_formatter',
+      '#items' => $items,
     );
   }
 
@@ -123,11 +136,11 @@ function latlonfield_field_formatter_view($entity_type, $entity, $field, $instan
 }
 
 /**
- * Returns HTML for a default latlon field formatter (no map).
+ * Returns HTML for a default latlon field formatter.
  *
  * @ingroup themeable
  */
-function template_latlonfield_formatter($variables) {
+function theme_latlonfield_default_formatter($variables) {
   $item = $variables['item'];
   $output = '';
 
@@ -137,4 +150,43 @@ function template_latlonfield_formatter($variables) {
   $output .= '</div>';
 
   return $output;
+}
+
+/**
+ * Implements hook_process_THEME().
+ */
+function template_process_latlonfield_gmap_formatter(&$variables) {
+  $items = $variables['items'];
+  if (!empty($items)) {
+
+    $map_options = $variables['map_options'];
+    $marker_options = $variables['marker_options'];
+    $attributes =& $variables['attributes'];
+
+    if (empty($attributes['id'])) {
+      $attributes['id'] = drupal_html_id('latlonfield-gmap');
+    }
+
+    drupal_add_js('http://maps.google.com/maps/api/js?sensor=false', 'external');
+    drupal_add_js(drupal_get_path('module', 'latlonfield') . '/latlonfield.js');
+    drupal_add_js(array(
+      'LatLonField' => array(
+        'Gmap' => array(
+          'id' => $attributes['id'],
+          'items' => $items,
+          'map_options' => (object)$map_options,
+          'marker_options' => (object)$marker_options,
+        ),
+      ),
+    ), 'setting');
+  }
+}
+
+/**
+ * Returns HTML for a google map latlon field formatter.
+ *
+ * @ingroup themeable
+ */
+function theme_latlonfield_gmap_formatter($variables) {
+  return '<div' . drupal_attributes($variables['attributes']) . '></div>';
 }

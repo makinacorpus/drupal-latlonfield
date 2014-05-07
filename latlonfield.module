@@ -7,8 +7,16 @@ require_once 'latlonfield.field.inc';
  */
 function latlonfield_theme() {
   return array(
-    'latlonfield_formatter' => array(
+    'latlonfield_default_formatter' => array(
       'variables' => array('item' => array()),
+    ),
+    'latlonfield_gmap_formatter' => array(
+      'variables' => array(
+        'items' => array(),
+        'map_options' => array(),
+        'marker_options' => array(),
+        'attributes' => array(),
+      ),
     ),
   );
 }
