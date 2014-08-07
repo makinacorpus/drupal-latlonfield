@@ -1,4 +1,6 @@
+/*jslint browser: true, devel: true, plusplus: true, todo: true, vars: true, white: true */
 (function ($) {
+"use strict";
 
 Drupal.behaviors.LatLonFieldGmap = {
   attach: function (context, settings) {
@@ -7,6 +9,10 @@ Drupal.behaviors.LatLonFieldGmap = {
     var map_default_options = settings.LatLonField.Gmap.map_options;
     var marker_default_options = settings.LatLonField.Gmap.marker_options;
     var items = settings.LatLonField.Gmap.items;
+
+    if (!Drupal.LatLonMaps) {
+      Drupal.LatLonMaps = {};
+    }
 
     $('#' + map_id, context).once('map', function() {
 
@@ -18,10 +24,13 @@ Drupal.behaviors.LatLonFieldGmap = {
       };
       jQuery.extend(map_options, map_default_options);
 
+      var i;
       var map = new google.maps.Map(this, map_options);
       var bounds = new google.maps.LatLngBounds();
 
-      for (var i = 0; i < items.length; i++) {
+      Drupal.LatLonMaps[map_id] = map;
+
+      for (i = 0; i < items.length; i++) {
 
         var marker_options = {
           position : new google.maps.LatLng(items[i].latitude, items[i].longitude),
@@ -45,4 +54,4 @@ Drupal.behaviors.LatLonFieldGmap = {
   }
 };
 
-})(jQuery);
+}(jQuery));
