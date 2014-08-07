@@ -2,6 +2,22 @@
 (function ($) {
 "use strict";
 
+Drupal.LatLonMaps = {
+
+  maps: [],
+
+  resize: function (map_id) {
+    var i, current;
+    for (i = 0; i < Drupal.LatLonMaps.maps.length; ++i) {
+      current = Drupal.LatLonMaps.maps[i];
+      if (!map_id || current.id === map_id) {
+        google.maps.event.trigger(current.map, 'resize');
+        current.map.setCenter(current.bounds.getCenter());
+      }
+    }
+  }
+};
+
 Drupal.behaviors.LatLonFieldGmap = {
   attach: function (context, settings) {
 
@@ -9,10 +25,6 @@ Drupal.behaviors.LatLonFieldGmap = {
     var map_default_options = settings.LatLonField.Gmap.map_options;
     var marker_default_options = settings.LatLonField.Gmap.marker_options;
     var items = settings.LatLonField.Gmap.items;
-
-    if (!Drupal.LatLonMaps) {
-      Drupal.LatLonMaps = {};
-    }
 
     $('#' + map_id, context).once('map', function() {
 
@@ -28,7 +40,12 @@ Drupal.behaviors.LatLonFieldGmap = {
       var map = new google.maps.Map(this, map_options);
       var bounds = new google.maps.LatLngBounds();
 
-      Drupal.LatLonMaps[map_id] = map;
+      // Register map for external usage
+      Drupal.LatLonMaps.maps.push({
+        id: map_id,
+        map: map,
+        bounds: bounds
+      });
 
       for (i = 0; i < items.length; i++) {
 
