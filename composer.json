@@ -1,0 +1,24 @@
+{
+    "name" : "makinacorpus/drupal-latlonfield",
+    "type" : "drupal-module",
+    "description" : "Very simple latitude/longitude storage field",
+    "homepage" : "http://github.com/makinacorpus/drupal-latlonfield",
+    "license" : "GPL-2",
+    "authors" : [
+        {
+            "name" : "Yannick Chabbert",
+            "email" : "yannick.chabbert@makina-corpus.com"
+        },
+        {
+            "name" : "Makina Corpus",
+            "homepage" : "http://makina-corpus.com"
+        }
+    ],
+    "autoload" : {
+        "psr-4" : {
+            "MakinaCorpus\\Drupal\\LatLonField\\" : "src/"
+        }
+    },
+    "minimum-stability" : "dev",
+    "prefer-stable" : true
+}
