@@ -1,20 +1,33 @@
 <?php
 
+/**
+ * Field API...
+ */
 require_once 'latlonfield.field.inc';
+
+/**
+ * ... needs...
+ */
+require_once 'latlonfield.field_widget.inc';
+
+/**
+ * ... this.
+ */
+require_once 'latlonfield.field_formatter.inc';
 
 /**
  * Implements hook_menu().
  */
 function latlonfield_menu() {
-  $items = array();
+  $items = [];
 
-  $items['admin/config/content/latlonfield'] = array(
-    'title' => 'LatLon Field settings',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('latlonfield_settings_form'),
-    'access arguments' => array('administer site configuration'),
-    'file' => 'latlonfield.admin.inc',
-  );
+  $items['admin/config/content/latlonfield'] = [
+    'title'             => 'LatLon Field settings',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['latlonfield_settings_form'],
+    'access arguments'  => ['administer site configuration'],
+    'type'              => MENU_NORMAL_ITEM,
+  ];
 
   return $items;
 }
@@ -23,18 +36,32 @@ function latlonfield_menu() {
  * Implements hook_theme().
  */
 function latlonfield_theme() {
-  return array(
-    'latlonfield_default_formatter' => array(
-      'variables' => array('item' => array()),
-    ),
-    'latlonfield_gmap_formatter' => array(
-      'variables' => array(
-        'items' => array(),
+  return [
+    'latlonfield_default_formatter' => [
+      'variables' => ['item' => []],
+    ],
+    'latlonfield_gmap_formatter' => [
+      'variables' => [
+        'items' => [],
         'api_key' => '',
-        'map_options' => array(),
-        'marker_options' => array(),
-        'attributes' => array(),
-      ),
-    ),
-  );
+        'map_options' => [],
+        'marker_options' => [],
+        'attributes' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Generate the settings form.
+ */
+function latlonfield_settings_form($form, &$form_state) {
+
+  $form['latlonfield_google_api_key'] = [
+    '#type'           => 'textfield',
+    '#title'          => t('Google map API key'),
+    '#default_value'  => variable_get('latlonfield_google_api_key'),
+  ];
+
+  return system_settings_form($form);
 }
