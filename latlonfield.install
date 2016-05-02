@@ -6,6 +6,139 @@
  */
 
 /**
+ * Implements hook_schema().
+ */
+function latlonfield_schema() {
+  $schema = [];
+
+  $schema['latlonfield_area'] = [
+    'fields' => [
+      'id' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'country' => [
+        'description' => 'ISO country code',
+        'type'        => 'varchar',
+        'length'      => 2,
+        'not null'    => false,
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'machine_name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+    ],
+    'primary key' => ['id', 'country'],
+  ];
+
+  $schema['latlonfield_sub_area'] = [
+    'fields' => [
+      'id' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+        ],
+      'area_id' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'country' => [
+        'description' => 'ISO country code',
+        'type'        => 'varchar',
+        'length'      => 2,
+        'not null'    => false,
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'machine_name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+    ],
+    'primary key' => ['id', 'country'],
+    'foreign keys' => [
+      'area' => [
+        'table' => 'latlonfield_area',
+        'columns' => ['area_id' => 'id'],
+      ],
+    ],
+  ];
+
+  $schema['latlonfield_locality'] = [
+    'fields' => [
+      'id' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'area_id' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'dept_id' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'country' => [
+        'description' => 'ISO country code',
+        'type'        => 'varchar',
+        'length'      => 2,
+        'not null'    => false,
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'machine_name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+    ],
+    'primary key' => ['id', 'area_id', 'dept_id', 'country'],
+    'foreign keys' => [
+      'area' => [
+        'table' => 'latlonfield_area',
+        'columns' => ['area_id' => 'id'],
+      ],
+      'sub_area' => [
+        'table' => 'latlonfield_sub_area',
+        'columns' => ['dept_id' => 'id'],
+      ],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
  * Implements hook_field_schema().
  */
 function latlonfield_field_schema($field) {
@@ -130,8 +263,186 @@ function latlonfield_field_schema($field) {
 }
 
 /**
+ * Implements hook_install().
+ */
+function latlonfield_install() {
+  latlonfield_import_data();
+}
+
+/**
  * Implements hook_uninstall().
  */
 function latlonfield_uninstall() {
   variable_del('latlonfield_google_api_key');
+}
+
+/**
+ * Create new tables for storing geo data.
+ */
+function latlonfield_update_7101() {
+  $schema = latlonfield_schema();
+  $schema = array_intersect_key(
+    $schema,
+    array_flip([
+      'latlonfield_area',
+      'latlonfield_sub_area',
+      'latlonfield_locality',
+    ])
+  );
+  foreach ($schema as $name => $table) {
+    if (!db_table_exists($name)) {
+      db_create_table($name, $table);
+    }
+  }
+}
+
+/**
+ * Populate geo tables with French data.
+ */
+function latlonfield_update_7102() {
+  latlonfield_import_data();
+}
+
+function latlonfield_import_data() {
+  latlonfield_import_areas();
+  latlonfield_import_sub_areas();
+  latlonfield_import_cities();
+}
+
+function latlonfield_import_areas() {
+  $file = DRUPAL_ROOT . '/' . drupal_get_path('module', 'latlonfield') . '/data/fr/insee/2016/reg.csv';
+  $handle = fopen($file, 'r');
+
+  if (FALSE === $handle) {
+    drupal_set_message(dt('Unable to found the file !file', ['!file' => $file]), 'error');
+    return;
+  }
+
+  // Flush table first.
+  db_truncate('latlonfield_area');
+
+  $is_header = TRUE;
+  while (FALSE !== ($data = fgetcsv($handle, 0, ',', '"'))) {
+
+    // Skip header.
+    if ($is_header) {
+      $is_header = FALSE;
+      continue;
+    }
+
+    try {
+      list($area_id, , , $machine_name, $name) = $data;
+
+      db_insert('latlonfield_area')
+        ->fields(array(
+          'id' => $area_id,
+          'country' => 'fr',
+          'name' => $name,
+          'machine_name' => $machine_name,
+        ))
+        ->execute();
+    } catch (Exception $e) {
+      drupal_set_message(dt('Area - Unable to treat row : !row with exception : !exc', [
+        '!row' => json_encode($data),
+        '!exc' => $e->getMessage(),
+      ]), 'error');
+      continue;
+    }
+  }
+  fclose($handle);
+
+  drupal_set_message(dt('French areas imported successfully.'));
+}
+
+function latlonfield_import_sub_areas() {
+  $file = DRUPAL_ROOT . '/' . drupal_get_path('module', 'latlonfield') . '/data/fr/insee/2016/depts.csv';
+  $handle = fopen($file, 'r');
+
+  if (FALSE === $handle) {
+    drupal_set_message(dt('Unable to found the file !file', ['!file' => $file]), 'error');
+    return;
+  }
+
+  // Flush table first.
+  db_truncate('latlonfield_sub_area');
+
+  $is_header = TRUE;
+  while (FALSE !== ($data = fgetcsv($handle, 0, ',', '"'))) {
+
+    // Skip header.
+    if ($is_header) {
+      $is_header = FALSE;
+      continue;
+    }
+
+    try {
+      list($area_id, $dept_id, , , $machine_name, $name) = $data;
+
+      db_insert('latlonfield_sub_area')
+        ->fields(array(
+          'id' => $dept_id,
+          'area_id' => $area_id,
+          'country' => 'fr',
+          'name' => $name,
+          'machine_name' => $machine_name,
+        ))
+        ->execute();
+    } catch (Exception $e) {
+      drupal_set_message(dt('Sub area - Unable to treat row : !row with exception : !exc', [
+        '!row' => json_encode($data),
+        '!exc' => $e->getMessage(),
+      ]), 'error');
+      continue;
+    }
+  }
+  fclose($handle);
+
+  drupal_set_message(dt('French sub_areas imported successfully.'));
+}
+
+function latlonfield_import_cities() {
+  $file = DRUPAL_ROOT . '/' . drupal_get_path('module', 'latlonfield') . '/data/fr/insee/2016/comsimp.csv';
+  $handle = fopen($file, 'r');
+
+  if (FALSE === $handle) {
+    drupal_set_message(dt('Unable to found the file !file', ['!file' => $file]), 'error');
+    return;
+  }
+
+  // Flush table first.
+  db_truncate('latlonfield_locality');
+
+  $is_header = TRUE;
+  while (FALSE !== ($data = fgetcsv($handle, 0, ',', '"'))) {
+
+    // Skip header.
+    if ($is_header) {
+      $is_header = FALSE;
+      continue;
+    }
+
+    try {
+      list(, , $area_id, $dept_id, $locality_id, , , , , $machine_name, , $name) = $data;
+
+      db_insert('latlonfield_locality')
+        ->fields(array(
+          'id' => $locality_id,
+          'area_id' => $area_id,
+          'dept_id' => $dept_id,
+          'country' => 'fr',
+          'name' => $name,
+          'machine_name' => $machine_name,
+        ))
+        ->execute();
+    } catch (Exception $e) {
+      drupal_set_message(dt('Locality - Unable to treat row : !row with exception : !exc', [
+        '!row' => json_encode($data),
+        '!exc' => $e->getMessage(),
+      ]), 'error');
+      continue;
+    }
+  }
+  fclose($handle);
+
+  drupal_set_message(dt('French cities imported successfully.'));
 }
