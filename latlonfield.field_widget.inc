@@ -64,7 +64,6 @@ function _latlonfield_field_widget_form_address_fr_afnor(&$form, &$form_state, $
     '#size'             => 38,
     '#maxlength'        => 38,
     '#default_value'    => $item['name_line'],
-    '#pre_render'       => ['latlonfield_element_required'],
   ];
   $element['organisation_name'] = [
     '#title'            => "Destinataire ou service", // FIXME: Hardcoded french
