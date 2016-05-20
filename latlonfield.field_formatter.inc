@@ -23,7 +23,9 @@ function latlonfield_field_formatter_info() {
     'address' => [
       'label'       => t('Default'),
       'field types' => ['address'],
-      'settings'    => [],
+      'settings'    => [
+        'fields' => [],
+      ],
     ],
     'address_fr_afnor' => [
       'label'       => t('French SNA/AFNOR standard'),
@@ -34,9 +36,39 @@ function latlonfield_field_formatter_info() {
 }
 
 /**
+ * Implements hook_field_formatter_settings_form().
+ */
+function latlonfield_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $element = [];
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  if ($display['type'] == 'address') {
+    $element['fields'] = [
+      '#title'         => t('Fields to display'),
+      '#type'          => 'checkboxes',
+      '#options'       => drupal_map_assoc([
+        '',
+        'name_line',
+        'organisation_name',
+        'premise',
+        'thoroughfare',
+        'dependent_locality',
+        'postal_code',
+        'locality',
+        'country',
+      ]),
+      '#default_value' => $settings['fields'],
+    ];
+  }
+
+  return $element;
+}
+
+/**
  * Render any address item.
  */
-function _latlonfield_address_render(array $item, $uppercase = []) {
+function _latlonfield_address_render(array $item, $settings, $uppercase = []) {
 
   $build = [];
   $build['#prefix'] = '<address>';
@@ -57,6 +89,15 @@ function _latlonfield_address_render(array $item, $uppercase = []) {
     }
   }
 
+  // Filter out hidden fields
+  if (!empty($settings['fields'])) {
+    foreach ($item as $key => $value) {
+      if (!in_array($key, $settings['fields'])) {
+        unset($item[$key]);
+      }
+    }
+  }
+
   // Group postal code and locality name.
   if (isset($item['postal_code']) && isset($item['locality'])) {
     $item['postal_code'] .= ' ' . $item['locality'];
@@ -73,8 +114,8 @@ function _latlonfield_address_render(array $item, $uppercase = []) {
 /**
  * Render any address item using the french SNA/AFNOR standard.
  */
-function _latlonfield_address_render_afnor(array $item) {
-  return _latlonfield_address_render($item, ['country', 'postal_code', 'locality', 'dependent_locality']);
+function _latlonfield_address_render_afnor(array $item, $settings) {
+  return _latlonfield_address_render($item, $settings, ['country', 'postal_code', 'locality', 'dependent_locality']);
 }
 
 /**
@@ -108,13 +149,13 @@ function latlonfield_field_formatter_view($entity_type, $entity, $field, $instan
 
     case 'address':
       foreach ($items as $delta => $item) {
-        $element[$delta] = _latlonfield_address_render($item);
+        $element[$delta] = _latlonfield_address_render($item, $display['settings'], []);
       }
       break;
 
     case 'address_fr_afnor':
       foreach ($items as $delta => $item) {
-        $element[$delta] = _latlonfield_address_render_afnor($item);
+        $element[$delta] = _latlonfield_address_render_afnor($item, $display['settings']);
       }
       break;
   }
