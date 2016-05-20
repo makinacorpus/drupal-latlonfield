@@ -25,6 +25,7 @@ function latlonfield_field_formatter_info() {
       'field types' => ['address'],
       'settings'    => [
         'fields' => [],
+        'notag'  => FALSE,
       ],
     ],
     'address_fr_afnor' => [
@@ -71,8 +72,10 @@ function latlonfield_field_formatter_settings_form($field, $instance, $view_mode
 function _latlonfield_address_render(array $item, $settings, $uppercase = []) {
 
   $build = [];
-  $build['#prefix'] = '<address>';
-  $build['#suffix'] = '</address>';
+  if (!isset($settings['notag']) || !$settings['notag']) {
+    $build['#prefix'] = '<address>';
+    $build['#suffix'] = '</address>';
+  }
 
   // Replace country name with full name.
   if (isset($item['country'])) {
