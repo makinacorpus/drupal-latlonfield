@@ -79,8 +79,7 @@ function _latlonfield_address_render(array $item, $settings, $uppercase = []) {
 
   // Replace country name with full name.
   if (isset($item['country'])) {
-    $countries = _addressfield_country_options_list();
-    $item['country'] = $countries[$item['country']];
+    $item['country'] = t('France');
   }
 
   // Drop empty fields.
