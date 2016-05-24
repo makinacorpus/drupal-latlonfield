@@ -63,17 +63,90 @@ function latlonfield_field_formatter_settings_form($field, $instance, $view_mode
     ];
   }
 
+  if ($display['type'] == 'address' || $display['type'] == 'address_fr_afnor') {
+    $element['notag'] = [
+      '#title'          => t('Do not wrap with an &lt;address&gt; tag'),
+      '#type'           => 'checkbox',
+      '#default_value'  => $settings['notag'],
+    ];
+
+    $element['md_enabled'] = [
+      '#title'          => t('Automatically add microdata'),
+      '#type'           => 'checkbox',
+      '#default_value'  => $settings['md_enabled'],
+    ];
+
+    $element['md_property'] = [
+      '#title'          => t('Microdata property name'),
+      '#type'           => 'textfield',
+      '#description'    => t('Fill in this field if you want to define the address as a property of another md_enabled type. Microdata must be enabled and the wrapper option must be unchecked.'),
+      '#default_value'  => $settings['md_property'],
+//      '#states' => [
+//        'enabled' => [
+//          ':input[name*="md_enabled"]' => ['checked' => true],
+//          ':input[name*="notag"]'      => ['unchecked' => true],
+//        ],
+//        'disabled' => [
+//          [':input[name*="md_enabled"]' => ['unchecked' => true]],
+//          [':input[name*="notag"]'      => ['checked' => true]],
+//        ],
+//      ],
+    ];
+  }
+
   return $element;
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function latlonfield_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $summary = [];
+
+  if ($display['type'] == 'address' && !empty($settings['fields'])) {
+    $summary[] = t('Fields displayed: !fields', ['!fields' => implode(', ', $settings['fields'])]);
+  }
+
+  if ($display['type'] == 'address' || $display['type'] == 'address_fr_afnor') {
+    if (isset($settings['notag']) && $settings['notag']) {
+      $summary[] = t('No &lt;address&gt; tag wrapping the address');
+    }
+
+    if (isset($settings['md_enabled']) && $settings['md_enabled']) {
+      $summary[] = t('Microdata enabled');
+      if (empty($settings['notag']) && !empty($settings['md_property'])) {
+        $summary[] = t('Microdata property name: @name', ['@name' => $settings['md_property']]);
+      }
+    }
+  }
+
+  if (empty($summary)) {
+    $summary[] = t('Display by default');
+  }
+
+  return implode('<br/>', $summary);
 }
 
 /**
  * Render any address item.
  */
 function _latlonfield_address_render(array $item, $settings, $uppercase = []) {
-
   $build = [];
+
   if (!isset($settings['notag']) || !$settings['notag']) {
-    $build['#prefix'] = '<address>';
+    $itemprop = $itemscope = '';
+
+    if (isset($settings['md_enabled']) && $settings['md_enabled']) {
+      $itemscope = ' itemscope itemtype="https://schema.org/PostalAddress"';
+      if (!empty($settings['md_property'])) {
+        $itemprop = ' itemprop="' . $settings['md_property'] . '"';
+      }
+    }
+
+    $build['#prefix'] = '<address' . $itemprop . $itemscope . '>';
     $build['#suffix'] = '</address>';
   }
 
@@ -91,11 +164,30 @@ function _latlonfield_address_render(array $item, $settings, $uppercase = []) {
     }
   }
 
-  // Filter out hidden fields
-  if (!empty($settings['fields'])) {
-    foreach ($item as $key => $value) {
-      if (!in_array($key, $settings['fields'])) {
-        unset($item[$key]);
+  // Prepare the address fields
+  foreach ($item as $key => $value) {
+    // Filter out hidden fields
+    if (!empty($settings['fields']) && !in_array($key, $settings['fields'])) {
+      unset($item[$key]);
+    }
+    // Add microdata if enabled
+    elseif (isset($settings['md_enabled']) && $settings['md_enabled']) {
+      $itemprop = false;
+
+      switch ($key) {
+        case 'name_line':   $itemprop = 'name';             break;
+        case 'premise':     $itemprop = 'streetAddress';    break;
+        case 'postal_code': $itemprop = 'postalCode';       break;
+        case 'locality':    $itemprop = 'addressLocality';  break;
+        case 'country':     $itemprop = 'addressCountry';   break;
+      }
+
+      if ($itemprop) {
+        if ($key == 'premise' && !empty($item['thoroughfare'])) {
+          $value .= '<br/>' . $item['thoroughfare'];
+          unset($item['thoroughfare']);
+        }
+        $item[$key] = '<span itemprop="' . $itemprop . '">' . $value . '</span>';
       }
     }
   }
