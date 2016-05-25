@@ -171,27 +171,24 @@ function _latlonfield_address_render(array $item, $settings, $uppercase = []) {
     // Filter out hidden fields
     if (!empty($settings['fields']) && !in_array($key, $settings['fields'])) {
       unset($item[$key]);
+      continue;
     }
+
+    $attributes = ['class' => drupal_clean_css_identifier($key)];
+
     // Add microdata if enabled
-    elseif (isset($settings['md_enabled']) && $settings['md_enabled']) {
-      $itemprop = false;
-
+    if (isset($settings['md_enabled']) && $settings['md_enabled']) {
       switch ($key) {
-        case 'name_line':   $itemprop = 'name';             break;
-        case 'premise':     $itemprop = 'streetAddress';    break;
-        case 'postal_code': $itemprop = 'postalCode';       break;
-        case 'locality':    $itemprop = 'addressLocality';  break;
-        case 'country':     $itemprop = 'addressCountry';   break;
-      }
-
-      if ($itemprop) {
-        if ($key == 'premise' && !empty($item['thoroughfare'])) {
-          $value .= '<br/>' . $item['thoroughfare'];
-          unset($item['thoroughfare']);
-        }
-        $item[$key] = '<span itemprop="' . $itemprop . '">' . $value . '</span>';
+        case 'name_line':     $attributes['itemprop'] = 'name';             break;
+        case 'premise':       $attributes['itemprop'] = 'streetAddress';    break;
+        case 'thoroughfare':  $attributes['itemprop'] = 'streetAddress';    break;
+        case 'postal_code':   $attributes['itemprop'] = 'postalCode';       break;
+        case 'locality':      $attributes['itemprop'] = 'addressLocality';  break;
+        case 'country':       $attributes['itemprop'] = 'addressCountry';   break;
       }
     }
+
+    $item[$key] = '<span' . drupal_attributes($attributes) . '>' . $value . '</span>';
   }
 
   // Group postal code and locality name.
