@@ -79,7 +79,7 @@ function latlonfield_field_formatter_settings_form($field, $instance, $view_mode
     $element['md_property'] = [
       '#title'          => t('Microdata property name'),
       '#type'           => 'textfield',
-      '#description'    => t('Fill in this field if you want to define the address as a property of another md_enabled type. Microdata must be enabled and the wrapper option must be unchecked.'),
+      '#description'    => t('Fill in this field if you want to define the address as a property of another microdata type. Microdata must be enabled and the wrapper option must be unchecked.'),
       '#default_value'  => $settings['md_property'],
 //      '#states' => [
 //        'enabled' => [
@@ -120,6 +120,8 @@ function latlonfield_field_formatter_settings_summary($field, $instance, $view_m
       if (empty($settings['notag']) && !empty($settings['md_property'])) {
         $summary[] = t('Microdata property name: @name', ['@name' => $settings['md_property']]);
       }
+    } else {
+      $summary[] = t('Microdata disabled');
     }
   }
 
@@ -140,7 +142,7 @@ function _latlonfield_address_render(array $item, $settings, $uppercase = []) {
     $itemprop = $itemscope = '';
 
     if (isset($settings['md_enabled']) && $settings['md_enabled']) {
-      $itemscope = ' itemscope itemtype="https://schema.org/PostalAddress"';
+      $itemscope = ' itemscope itemtype="http://schema.org/PostalAddress"';
       if (!empty($settings['md_property'])) {
         $itemprop = ' itemprop="' . $settings['md_property'] . '"';
       }
