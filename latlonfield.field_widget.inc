@@ -61,36 +61,36 @@ function _latlonfield_field_widget_form_address_fr_afnor(&$form, &$form_state, $
   $element['name_line'] = [
     '#title'            => "Raison sociale/dénomination", // FIXME: Hardcoded french
     '#type'             => 'textfield',
-    '#size'             => 38,
-    '#maxlength'        => 38,
+    '#size'             => 255,
+    '#maxlength'        => 255,
     '#default_value'    => $item['name_line'],
   ];
   $element['organisation_name'] = [
     '#title'            => "Destinataire ou service", // FIXME: Hardcoded french
     '#type'             => 'textfield',
-    '#size'             => 38,
-    '#maxlength'        => 38,
+    '#size'             => 255,
+    '#maxlength'        => 255,
     '#default_value'    => $item['organisation_name'],
   ];
   $element['premise'] = [
     '#title'            => t("Address 1"),
     '#type'             => 'textfield',
-    '#size'             => 38,
-    '#maxlength'        => 38,
+    '#size'             => 255,
+    '#maxlength'        => 255,
     '#default_value'    => $item['premise'],
   ];
   $element['thoroughfare'] = [
     '#title'            => t("Address 2"),
     '#type'             => 'textfield',
-    '#size'             => 38,
-    '#maxlength'        => 38,
+    '#size'             => 255,
+    '#maxlength'        => 255,
     '#default_value'    => $item['thoroughfare'],
   ];
   $element['dependent_locality'] = [
     '#title'            => "Mention spéciale", // FIXME: Hardcoded french
     '#type'             => 'textfield',
-    '#size'             => 38,
-    '#maxlength'        => 38,
+    '#size'             => 255,
+    '#maxlength'        => 255,
     '#default_value'    => $item['dependent_locality'],
   ];
   $element['postal_code'] = [
@@ -104,8 +104,8 @@ function _latlonfield_field_widget_form_address_fr_afnor(&$form, &$form_state, $
   $element['locality'] = [
     '#title'            => t("City"),
     '#type'             => 'textfield',
-    '#size'             => 27,
-    '#maxlength'        => 27,
+    '#size'             => 255,
+    '#maxlength'        => 255,
     '#attributes'       => ['class' => ['addressfield-city']],
     '#default_value'    => $item['locality'],
     '#pre_render'       => ['latlonfield_element_required'],
