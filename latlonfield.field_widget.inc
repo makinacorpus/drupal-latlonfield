@@ -23,19 +23,26 @@ function latlonfield_field_widget_info() {
  */
 function _latlonfield_field_widget_form_latlon(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
 
+  if (!isset($element['#required'])) {
+    $element['#required'] = false;
+  }
+  $required = $element['#required'];
+
   $element['latitude'] = [
     '#type'             => 'textfield',
     '#title'            => t('Latitude'),
     '#default_value'    => isset($items[$delta]['latitude']) ? $items[$delta]['latitude'] : '',
     '#element_validate' => ['element_validate_number'],
-    '#pre_render' => ['latlonfield_element_required'],
+    '#required'         => $required,
+    '#pre_render'       => $required ? ['latlonfield_element_required'] : [],
   ];
   $element['longitude'] = [
     '#type'             => 'textfield',
     '#title'            => t('Longitude'),
     '#default_value'    => isset($items[$delta]['longitude']) ? $items[$delta]['longitude'] : '',
     '#element_validate' => ['element_validate_number'],
-    '#pre_render'       => ['latlonfield_element_required'],
+    '#required'         => $required,
+    '#pre_render'       => $required ? ['latlonfield_element_required'] : [],
   ];
 
   return $element;
@@ -45,6 +52,11 @@ function _latlonfield_field_widget_form_latlon(&$form, &$form_state, $field, $in
  * Not really implements hook_field_widget_form().
  */
 function _latlonfield_field_widget_form_address_fr_afnor(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+
+  if (!isset($element['#required'])) {
+    $element['#required'] = false;
+  }
+  $required = $element['#required'];
 
   $item = isset($items[$delta]) ? $items[$delta] : [];
   $item += [
@@ -99,7 +111,8 @@ function _latlonfield_field_widget_form_address_fr_afnor(&$form, &$form_state, $
     '#size'             => 10,
     '#maxlength'        => 10,
     '#default_value'    => $item['postal_code'],
-    '#pre_render'       => ['latlonfield_element_required'],
+    '#required'         => $required,
+    '#pre_render'       => $required ? ['latlonfield_element_required'] : [],
   ];
   $element['locality'] = [
     '#title'            => t("City"),
@@ -108,7 +121,8 @@ function _latlonfield_field_widget_form_address_fr_afnor(&$form, &$form_state, $
     '#maxlength'        => 255,
     '#attributes'       => ['class' => ['addressfield-city']],
     '#default_value'    => $item['locality'],
-    '#pre_render'       => ['latlonfield_element_required'],
+    '#required'         => $required,
+    '#pre_render'       => $required ? ['latlonfield_element_required'] : [],
   ];
   $element['country'] = [
     '#title'            => t('Country'),
@@ -116,7 +130,8 @@ function _latlonfield_field_widget_form_address_fr_afnor(&$form, &$form_state, $
     '#options'          => ['fr' => "FRANCE"], // @todo coutry
     '#default_value'    => $item['country'],
     '#disabled'         => true,
-    '#pre_render'       => ['latlonfield_element_required'],
+    '#required'         => $required,
+    '#pre_render'       => $required ? ['latlonfield_element_required'] : [],
   ];
 
   return $element;
@@ -145,15 +160,4 @@ function latlonfield_field_widget_form(&$form, &$form_state, $field, $instance, 
 function latlonfield_element_required($element) {
   $element['#required'] = true;
   return $element;
-}
-
-/**
- * Address element validate callback.
- */
-function latlonfield_element_validate($element, &$form_state, $form) {
-  if (!empty($element['latitude']['#value']) && empty($element['longitude']['#value'])) {
-    form_error($element['longitude'], t('Field %name is required.', ['%name' => $element['longitude']['#title']]));
-  } else if (!empty($element['latitude']['#value']) && empty($element['longitude']['#value'])) {
-    form_error($element['latitude'], t('Field %name is required.', ['%name' => $element['latitude']['#title']]));
-  }
 }
