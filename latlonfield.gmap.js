@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true, plusplus: true, todo: true, vars: true, white: true */
-(function ($) {
+(function ($, Drupal, google) {
 "use strict";
 
 Drupal.LatLonMaps = {
@@ -71,4 +71,4 @@ Drupal.behaviors.LatLonFieldGmap = {
   }
 };
 
-}(jQuery));
+}(jQuery, Drupal, google));

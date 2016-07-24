@@ -18,7 +18,16 @@ function latlonfield_field_formatter_info() {
     'latlonfield_leaflet' => [
       'label'       => t('Leaflet'),
       'field types' => ['latlon'],
-      'settings'    => [],
+      'settings'    => [
+        'id'          => null,
+        'map'         => [],   // Use this to arbitrary set map options
+        'zoom'        => null, // Default zoom
+        'maxZoom'     => null, // Maximum zoom
+        'minZoom'     => null, // Minimum zoom
+        'latitude'    => null, // Default center latitude
+        'longitude'   => null, // Default center longitude
+        'attribution' => 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+      ],
     ],
     'address' => [
       'label'       => t('Default'),
@@ -232,12 +241,17 @@ function latlonfield_field_formatter_view($entity_type, $entity, $field, $instan
       $element[0] = [
         '#theme'    => 'latlonfield_gmap_formatter',
         '#items'    => $items,
+        '#options'  => $display['settings'],
         '#api_key'  => variable_get('latlonfield_google_api_key'),
       ];
       break;
 
     case 'latlonfield_leaflet':
-      // @todo
+      $element[0] = [
+        '#theme'    => 'latlonfield_leaflet_formatter',
+        '#options'  => $display['settings'],
+        '#items'    => $items,
+      ];
       break;
 
     case 'address':
@@ -278,18 +292,17 @@ function template_process_latlonfield_gmap_formatter(&$variables) {
   $items = $variables['items'];
   if (!empty($items)) {
 
-    $api_key = $variables['api_key'];
-    $map_options = $variables['map_options'];
+    $api_key        = $variables['api_key'];
+    $map_options    = $variables['map_options'];
     $marker_options = $variables['marker_options'];
-    $attributes =& $variables['attributes'];
+    $attributes     = &$variables['attributes'];
 
     if (empty($attributes['id'])) {
       $attributes['id'] = drupal_html_id('latlonfield-gmap');
     }
 
-    $url = ($GLOBALS['is_https'] ? 'https' : 'http') . '://maps.google.com/maps/api/js?sensor=false' . ($api_key ? "&key=$api_key" : '');
-    drupal_add_js($url, 'external');
-    drupal_add_js(drupal_get_path('module', 'latlonfield') . '/latlonfield.js');
+    drupal_add_js(LATLONFIELD_GMAP_API . ($api_key ? "&key=$api_key" : ''), 'external');
+    drupal_add_js(drupal_get_path('module', 'latlonfield') . '/latlonfield.gmap.js');
     drupal_add_js(array(
       'LatLonField' => array(
         'Gmap' => array(
@@ -304,8 +317,44 @@ function template_process_latlonfield_gmap_formatter(&$variables) {
 }
 
 /**
+ * Implements hook_process_THEME().
+ */
+function template_process_latlonfield_leaflet_formatter(&$variables) {
+
+  $items    = $variables['items'];
+  $options  = $variables['options'];
+
+  if (!empty($items)) {
+
+    // Fixes maybe $options identifier.
+    if (empty($options['id'])) {
+      $options['id'] = drupal_html_id('latlonfield-leaflet');
+    }
+
+    // Add necessary JS and prey for it to work.
+    drupal_add_js(LATLONFIELD_LEAFLET_CDN_JS, 'external');
+    drupal_add_css(LATLONFIELD_LEAFLET_CDN_CSS, 'external');
+    drupal_add_js(drupal_get_path('module', 'latlonfield') . '/latlonfield.leaflet.js');
+    drupal_add_js(array(
+      'LatLonField' => array(
+        'Leaflet' => array(
+           $options,
+        ),
+      ),
+    ), 'setting');
+  }
+}
+
+/**
  * Returns HTML for a google map latlon field formatter.
  */
 function theme_latlonfield_gmap_formatter($variables) {
   return '<div' . drupal_attributes($variables['attributes']) . '></div>';
+}
+
+/**
+ * Returns HTML for a google map latlon field formatter.
+ */
+function theme_latlonfield_leaflet_formatter($variables) {
+  return '<div id="' . $variables['options']['id'] . '"></div>';
 }

@@ -1,18 +1,14 @@
 <?php
 
+const LATLONFIELD_LEAFLET_CDN_JS = "//npmcdn.com/leaflet@1.0.0-rc.2/dist/leaflet.js";
+const LATLONFIELD_LEAFLET_CDN_CSS = "//npmcdn.com/leaflet@1.0.0-rc.2/dist/leaflet.css";
+const LATLONFIELD_GMAP_API = "//maps.google.com/maps/api/js?sensor=false";
+
 /**
- * Field API...
+ * Field API.
  */
 require_once 'latlonfield.field.inc';
-
-/**
- * ... needs...
- */
 require_once 'latlonfield.field_widget.inc';
-
-/**
- * ... this.
- */
 require_once 'latlonfield.field_formatter.inc';
 
 /**
@@ -47,6 +43,12 @@ function latlonfield_theme() {
         'map_options' => [],
         'marker_options' => [],
         'attributes' => [],
+      ],
+    ],
+    'latlonfield_leaflet_formatter' => [
+      'variables' => [
+        'items' => [],
+        'options' => [],
       ],
     ],
   ];
