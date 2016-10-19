@@ -1,0 +1,138 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2016-10-19 15:57+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field.inc:14
+msgid "Lat/Lon"
+msgstr "Lat/Lon"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field.inc:15
+msgid "Stores latitude/longitude coordinates"
+msgstr "Stocke des coordonnées latitute/longitude"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field.inc:22
+msgid "Address"
+msgstr "Adresse"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field.inc:23
+msgid "Stores an address"
+msgstr "Stocke une adresse"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:14
+msgid "Google map"
+msgstr "Google map"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:19
+msgid "Leaflet"
+msgstr "Leaflet"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:41
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_widget.inc:14
+msgid "French SNA/AFNOR standard"
+msgstr "Standard français SNA/AFNOR"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:58
+msgid "Fields to display"
+msgstr "Champs à afficher"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:77
+msgid "Do not wrap with an &lt;address&gt; tag"
+msgstr "Ne pas envelopper avec une balise &lt;address&gt;"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:83
+msgid "Automatically add microdata"
+msgstr "Ajouter automatiquement les microdonnées"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:89
+msgid "Microdata property name"
+msgstr "Nom de la propriété microdata"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:91
+msgid ""
+"Fill in this field if you want to define the address as a property of "
+"another microdata type. Microdata must be enabled and the wrapper option "
+"must be unchecked."
+msgstr ""
+"Remplissez ce champ si vous souhaiter définir l'adresse comme une propriété "
+"d'un autre type de microdonnée. Les microdonnées doivent être activées et "
+"l'option d'enveloppement désactivés."
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:119
+msgid "Fields displayed: !fields"
+msgstr "Champs affichés : !fields"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:124
+msgid "No &lt;address&gt; tag wrapping the address"
+msgstr "Pas d'enveloppement avec la balise &lt;address&gt;"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:128
+msgid "Microdata enabled"
+msgstr "Microdonnées activées"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:130
+msgid "Microdata property name: @name"
+msgstr "Nom de la propriété microdonnées : @name"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:133
+msgid "Microdata disabled"
+msgstr "Microdonnées désactivées"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:138
+msgid "Display by default"
+msgstr "Mode d’affichage par défaut"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:166
+msgid "France"
+msgstr "France"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_formatter.inc:9;33
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_widget.inc:9
+msgid "Default"
+msgstr "Défaut"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_widget.inc:33
+msgid "Latitude"
+msgstr "Latitude"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_widget.inc:41
+msgid "Longitude"
+msgstr "Longitude"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_widget.inc:88
+msgid "Address 1"
+msgstr "Adresse 1"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_widget.inc:95
+msgid "Address 2"
+msgstr "Adresse 2"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_widget.inc:109
+msgid "Postal code"
+msgstr "Code postal"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_widget.inc:118
+msgid "City"
+msgstr "Ville"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.field_widget.inc:128
+msgid "Country"
+msgstr "Pays"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.module:21
+msgid "LatLon Field settings"
+msgstr "Paramètres du champ LatLon"
+
+#: sites/all/modules/composer/drupal-latlonfield/latlonfield.module:64
+msgid "Google map API key"
+msgstr "Clé d'API Google Maps"
