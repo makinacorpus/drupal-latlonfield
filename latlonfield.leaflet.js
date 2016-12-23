@@ -39,26 +39,30 @@
 //          map: map,
 //        });
 
-        /*
-        var i;
-        for (i = 0; i < items.length; i++) {
-          var marker_options = {
-            position : new google.maps.LatLng(items[i].latitude, items[i].longitude),
-            map : map
-          };
-          jQuery.extend(marker_options, marker_default_options);
-          var marker = new google.maps.Marker(marker_options);
-          bounds.extend(marker.getPosition());
-        }
+        if (options.showBubbles && items) {
+          var i, bounds = [];
 
-        if (items.length > 1) {
-          // Reset zoom with bounds if further markers
-          map.fitBounds(bounds);
-        } else {
-          // Otherwise, keep default zoom focus
-          map.setCenter(bounds.getCenter());
+          for (i = 0; i < items.length; i++) {
+            var item = items[i];
+            if (!item.latitude || !item.longitude) {
+              return;
+            }
+
+            var marker = L.marker([item.latitude, item.longitude]);
+            marker.addTo(map);
+            bounds.push(marker.getLatLng());
+
+            if (item.text) {
+              marker.bindPopup(item.text);
+            }
+          }
+
+          if (bounds.length < 1) {
+            map.fitBounds(L.latLngBounds(bounds));
+          } else {
+            map.panTo(bounds[0]);
+          }
         }
-         */
       }
     }
   };

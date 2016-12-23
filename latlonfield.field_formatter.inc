@@ -26,6 +26,7 @@ function latlonfield_field_formatter_info() {
         'minZoom'     => null, // Minimum zoom
         'latitude'    => null, // Default center latitude
         'longitude'   => null, // Default center longitude
+        'showBubbles' => false,
         'attribution' => 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
       ],
     ],
@@ -325,6 +326,11 @@ function template_process_latlonfield_leaflet_formatter(&$variables) {
   $options  = $variables['options'];
 
   if (!empty($items)) {
+
+    $options += [
+      'showBubbles' => false,
+      'items' => $items
+    ];
 
     // Fixes maybe $options identifier.
     if (empty($options['id'])) {
