@@ -1,6 +1,9 @@
 /*jslint browser: true, devel: true, plusplus: true, todo: true, vars: true, white: true */
 (function ($, Drupal, L) {
-"use strict";
+  "use strict";
+
+  // Avoid double initialization, this would cause JS errors.
+  var initialized = {};
 
   Drupal.behaviors.LatLonFieldLeaflet = {
     attach: function (context, settings) {
@@ -14,6 +17,12 @@
 
         var options = settings.LatLonField.Leaflet[key];
         var mapId   = options.id;
+
+        if (initialized[options.id]) {
+          return; // This map already has been initialized.
+        }
+        initialized[options.id] = true;
+
         var items   = options.items;
 
         // Sorry, but default will be Nantes, FRANCE, if you're unhappy
