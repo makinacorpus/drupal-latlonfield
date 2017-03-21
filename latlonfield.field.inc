@@ -16,7 +16,7 @@ function latlonfield_field_info() {
       'settings'          => [],
       'instance_settings' => [],
       'default_widget'    => 'latlon',
-      'default_formatter' => 'latlon',
+      'default_formatter' => 'latlonfield',
     ],
     'address' => [
       'label'             => t('Address'),
