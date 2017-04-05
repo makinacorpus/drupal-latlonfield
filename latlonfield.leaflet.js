@@ -18,6 +18,14 @@
         var options = settings.LatLonField.Leaflet[key];
         var mapId   = options.id;
 
+        // Ensure the map exists on the scren
+        if (!$('#' + mapId).length) {
+          if (console && console.log) {
+            console.log("#" + mapId + " container could not be found");
+          }
+          return;
+        }
+
         if (initialized[options.id]) {
           return; // This map already has been initialized.
         }
