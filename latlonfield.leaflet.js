@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true, plusplus: true, todo: true, vars: true, white: true */
-(function ($, Drupal, L) {
+(function ($, Drupal /*, L */) {
   "use strict";
 
   // Avoid double initialization, this would cause JS errors.
@@ -84,4 +84,4 @@
     }
   };
 
-}(jQuery, Drupal, L));
+}(jQuery, Drupal /*, L */));
