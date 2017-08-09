@@ -43,6 +43,14 @@ function latlonfield_field_formatter_info() {
       'field types' => ['address'],
       'settings'    => [],
     ],
+    'google_maps_url' => [
+      'label'       => t('Google maps URL'),
+      'field types' => ['latlon'],
+      'settings'    => [
+        'title'       => 'Google Maps',
+        'attributes'  => [],
+      ],
+    ],
   ];
 }
 
@@ -222,6 +230,13 @@ function _latlonfield_address_render_afnor(array $item, $settings) {
 }
 
 /**
+ * Render Google Maps URL.
+ */
+function _latlonfield_address_render_google_maps_url(array $item, $settings) {
+  return ['#markup' => l($settings['title'],  'https://www.google.com/maps/place/' . $item['latitude'] . ',' . $item['longitude'], ['attributes' => $settings['attributes']])];
+}
+
+/**
  * Implements hook_field_formatter_view().
  */
 function latlonfield_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
@@ -264,6 +279,12 @@ function latlonfield_field_formatter_view($entity_type, $entity, $field, $instan
     case 'address_fr_afnor':
       foreach ($items as $delta => $item) {
         $element[$delta] = _latlonfield_address_render_afnor($item, $display['settings']);
+      }
+      break;
+
+    case 'google_maps_url':
+      foreach ($items as $delta => $item) {
+        $element[$delta] = _latlonfield_address_render_google_maps_url($item, $display['settings']);
       }
       break;
   }
