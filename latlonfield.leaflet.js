@@ -12,6 +12,11 @@
         return;
       }
 
+      if ("undefined" === typeof L) {
+        console.log("could not find leaflet, did you include it?");
+        return;
+      }
+
       var key;
       for (key in settings.LatLonField.Leaflet) {
 
