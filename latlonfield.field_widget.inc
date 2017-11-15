@@ -19,6 +19,17 @@ function latlonfield_field_widget_info() {
 }
 
 /**
+ * Core is too strict with number validation
+ */
+function element_validate_number_with_trim($element, &$form_state) {
+  $value = trim($element['#value']);
+  if ($value != '' && !is_numeric($value)) {
+    form_error($element, t('%name must be a number.', array('%name' => $element['#title'])));
+  }
+  form_set_value($element, $value, $form_state);
+}
+
+/**
  * Not really implements hook_field_widget_form().
  */
 function _latlonfield_field_widget_form_latlon(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
@@ -32,7 +43,7 @@ function _latlonfield_field_widget_form_latlon(&$form, &$form_state, $field, $in
     '#type'             => 'textfield',
     '#title'            => t('Latitude'),
     '#default_value'    => isset($items[$delta]['latitude']) ? $items[$delta]['latitude'] : '',
-    '#element_validate' => ['element_validate_number'],
+    '#element_validate' => ['element_validate_number_with_trim'],
     '#required'         => $required,
     '#pre_render'       => $required ? ['latlonfield_element_required'] : [],
   ];
@@ -40,7 +51,7 @@ function _latlonfield_field_widget_form_latlon(&$form, &$form_state, $field, $in
     '#type'             => 'textfield',
     '#title'            => t('Longitude'),
     '#default_value'    => isset($items[$delta]['longitude']) ? $items[$delta]['longitude'] : '',
-    '#element_validate' => ['element_validate_number'],
+    '#element_validate' => ['element_validate_number_with_trim'],
     '#required'         => $required,
     '#pre_render'       => $required ? ['latlonfield_element_required'] : [],
   ];
