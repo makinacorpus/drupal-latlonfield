@@ -156,6 +156,20 @@ function latlonfield_field_formatter_settings_summary($field, $instance, $view_m
 function _latlonfield_address_render(array $item, $settings, $uppercase = []) {
   $build = [];
 
+  // Reorder correctly the database item
+  $reference_order = [
+      'first_name' => -20, 'last_name' => -10, 'name_line' => 0,
+      'organisation_name' => 10, 'premise' => 20, 'sub_premise' => 22,
+      'thoroughfare' => 30, 'dependent_locality' => 40, 'postal_code' => 50,
+      'locality' => 60, 'administrative_area' => 65,
+      'sub_administrative_area' => 66, 'country' => 70
+  ];
+  uksort($item, function ($key1, $key2) use ($reference_order) {
+      $key1 = isset($reference_order[$key1]) ? $reference_order[$key1] : 0;
+      $key2 = isset($reference_order[$key2]) ? $reference_order[$key2] : 0;
+      return $key1 - $key2;
+  });
+
   if (!isset($settings['notag']) || !$settings['notag']) {
     $itemprop = $itemscope = '';
 
@@ -216,7 +230,6 @@ function _latlonfield_address_render(array $item, $settings, $uppercase = []) {
   }
 
   // WHAT WHAT? Sad Drupal is sad...
-  $item = array_reverse($item, true);
   $build['#markup'] = implode("<br/>\n", $item);
 
   return $build;
