@@ -3,7 +3,7 @@
     "type" : "drupal-module",
     "description" : "Very simple latitude/longitude storage field",
     "homepage" : "http://github.com/makinacorpus/drupal-latlonfield",
-    "license" : "GPL-2",
+    "license" : "GPL-2.0-or-later",
     "authors" : [
         {
             "name" : "Yannick Chabbert",
