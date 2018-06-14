@@ -122,8 +122,6 @@ function _latlonfield_field_widget_form_address_fr_afnor(&$form, &$form_state, $
     '#size'             => 10,
     '#maxlength'        => 10,
     '#default_value'    => $item['postal_code'],
-    '#required'         => $required,
-    '#pre_render'       => $required ? ['latlonfield_element_required'] : [],
   ];
   $element['locality'] = [
     '#title'            => t("City"),
@@ -132,8 +130,6 @@ function _latlonfield_field_widget_form_address_fr_afnor(&$form, &$form_state, $
     '#maxlength'        => 255,
     '#attributes'       => ['class' => ['addressfield-city']],
     '#default_value'    => $item['locality'],
-    '#required'         => $required,
-    '#pre_render'       => $required ? ['latlonfield_element_required'] : [],
   ];
   $element['country'] = [
     '#title'            => t('Country'),
@@ -141,8 +137,6 @@ function _latlonfield_field_widget_form_address_fr_afnor(&$form, &$form_state, $
     '#options'          => ['fr' => "FRANCE"], // @todo coutry
     '#default_value'    => $item['country'],
     '#disabled'         => true,
-    '#required'         => $required,
-    '#pre_render'       => $required ? ['latlonfield_element_required'] : [],
   ];
 
   return $element;
