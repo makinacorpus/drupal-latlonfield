@@ -39,6 +39,7 @@ function latlonfield_field_is_empty($item, $field) {
       return empty($item['latitude']) || empty($item['longitude']);
 
     case 'address':
+      unset($item['country']); // Do not rely on the country field for emptyness
       return empty(array_filter($item));
   }
 }
