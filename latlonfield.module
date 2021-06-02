@@ -1,7 +1,7 @@
 <?php
 
-const LATLONFIELD_LEAFLET_CDN_JS = "//npmcdn.com/leaflet@1.0.0-rc.2/dist/leaflet.js";
-const LATLONFIELD_LEAFLET_CDN_CSS = "//npmcdn.com/leaflet@1.0.0-rc.2/dist/leaflet.css";
+const LATLONFIELD_LEAFLET_CDN_JS = "//unpkg.com/leaflet@1.0.0-rc.2/dist/leaflet.js";
+const LATLONFIELD_LEAFLET_CDN_CSS = "//unpkg.com/leaflet@1.0.0-rc.2/dist/leaflet.css";
 const LATLONFIELD_GMAP_API = "//maps.google.com/maps/api/js?sensor=false";
 
 /**
